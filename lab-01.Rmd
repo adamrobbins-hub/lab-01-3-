@@ -140,13 +140,10 @@ visitors %>%
 
 _How many regions have more than 50 tourist attraction in the data set? (Hint: You will need to tabulate the data before filtering.)_
 
-
-
 ```{r Ex_g}
 visitors %>% 
-  tabulate(region) %>%
-  filter(count(attraction)>50)
-  count()
+  count(region) %>%
+    filter(n>50)
 ```
 
 
@@ -171,11 +168,11 @@ visitors %>%
 _Perform the same calculation for the 2021 admissions data._
 
 ```{r Ex_h}
-#visitors %>% 
-#  ______(
-#    __________,
-#    __________
-#  )
+visitors %>% 
+  summarise(
+    mean_2021=mean(n_2021),
+    med_2021=median(n_2021)
+  )
 ```
 
 All values in the output are `NA`!
@@ -186,7 +183,7 @@ _What does `NA` stand for and why are you getting this as your answer to the pre
 
 **Write your answer here**
 
-
+'NA' stands for Not Applicable/Available and we get it because in the n_2021 column there are some 'NA' entries, meaning the column's datatype is classed as 'character', and a mean/median cannot be taken.
 
 
 ### Exercise j.
@@ -195,6 +192,13 @@ _Look at the help pages for the `mean()` and `median()` commands to see what the
 
 **Write your answer here**
 
+```{r}
+visitors |> 
+  summarise(
+    mean_2021=mean(n_2021, na.rm=TRUE),
+    med_2022=median(n_2022, na.rm=TRUE)
+  )
+```
 
 
 
@@ -217,16 +221,18 @@ _Observe in question 6 that the mean statistics across all settings are much lar
 
 **Write your answer here**
 
+The data is positively skewed
+
 ## Question 8
 
 ### Exercise l.
 
 ```{r Q8}
-#visitors %>% 
-#  summarise(
-#     __________,
-#     __________,
-#  )
+visitors %>% 
+  summarise(
+     max_visitors=max(n_2021, na.rm=TRUE),
+     min_visitors=min(n_2021, na.rm=TRUE),
+  )
 ```
 
 ## Question 9
@@ -257,8 +263,8 @@ _How many tourist attractions are there in each of the 4 nations? From this, dis
 
 
 ```{r Ex_l}
-#________ %>%
-#  ______(_______)
+visitors_with_nations %>%
+  count(nation)
 ```
 
 
@@ -272,6 +278,12 @@ _Within each of the 4 nations, what is the proportion of tourist attractions tha
 ```{r Ex_m}
 # Write your code here
 
+visitors_with_nations |> 
+  group_by(nation) |> 
+    count(admission) |> 
+      mutate(pct=100*n/sum(n)) |> 
+        filter(admission == "Free") %>%
+          arrange(desc(pct))
 
 ```
 
@@ -282,7 +294,12 @@ _Calculate the percentage change in visitor admissions from 2021 to 2022. Of the
 
 ```{r Ex_n}
 # Write your code here
+visitors_with_nations |> 
+  mutate(percentage_change=100*(n_2022-n_2021)/n_2021) |> 
+    filter(nation == "Scotland") |> 
+    arrange(desc(percentage_change))
 ```
 
 
-
+```{r Ex_n}
+```
